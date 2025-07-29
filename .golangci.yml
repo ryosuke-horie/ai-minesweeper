@@ -2,36 +2,118 @@ linters:
   enable:
     - gofmt
     - govet
-    - errcheck
+    - gosec
     - ineffassign
+    - misspell
+    - unconvert
+    - goconst
+    - gocyclo
+    - goimports
+    - typecheck
     - unused
     - staticcheck
     - gosimple
-    - goconst
-    - goimports
-    - misspell
-    - unconvert
+    - stylecheck
     - prealloc
+    - bodyclose
+    - dupl
+    - goprintffuncname
+    - lll
     - nakedret
+    - rowserrcheck
+    - exportloopref
+    - whitespace
+    - godot
+    - noctx
+    - nolintlint
 
 linters-settings:
-  gofmt:
-    simplify: true
+  gocyclo:
+    min-complexity: 15
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  misspell:
+    locale: US
+  lll:
+    line-length: 120
   goimports:
     local-prefixes: github.com/r-horie/ai-minesweeper
-  goconst:
-    min-len: 3
-    min-occurrences: 3
-  nakedret:
-    max-func-lines: 30
-
-run:
-  deadline: 5m
-  tests: true
+  govet:
+    check-shadowing: true
+  nolintlint:
+    allow-leading-space: true
+    allow-unused: false
+    require-explanation: false
+    require-specific: false
 
 issues:
   exclude-rules:
     - path: _test\.go
       linters:
-        - errcheck
-        - ineffassign
+        - dupl
+        - gosec
+        - goconst
+    - path: integration_test/
+      linters:
+        - dupl
+        - gosec
+    - path: testutil/
+      linters:
+        - dupl
+    - text: "weak cryptographic primitive"
+      linters:
+        - gosec
+    - text: "don't use ALL_CAPS in Go names"
+      linters:
+        - stylecheck
+
+  # Maximum issues count per one linter. Set to 0 to disable.
+  max-issues-per-linter: 50
+
+  # Maximum count of issues with the same text. Set to 0 to disable.
+  max-same-issues: 3
+
+  # Show only new issues
+  new: false
+
+run:
+  # Timeout for analysis
+  timeout: 5m
+
+  # Include test files
+  tests: true
+
+  # List of build tags
+  build-tags:
+    - integration
+
+  # Directories to skip
+  skip-dirs:
+    - vendor
+    - third_party
+    - testdata
+
+  # Files to skip
+  skip-files:
+    - ".*\\.pb\\.go"
+    - ".*\\.gen\\.go"
+
+output:
+  # Output format
+  formats:
+    - format: colored-line-number
+  
+  # Print lines of code with issue
+  print-issued-lines: true
+  
+  # Print linter name in the end of issue text
+  print-linter-name: true
+  
+  # Make issues output unique by line
+  uniq-by-line: true
+  
+  # Sort results
+  sort-results: true

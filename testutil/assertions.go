@@ -95,7 +95,7 @@ func CountMines(board *game.Board) int {
 	return count
 }
 
-// CountRevealed ボード上の開かれたセル数をカウント
+// CountRevealed 開かれたセルの数を数える
 func CountRevealed(board *game.Board) int {
 	count := 0
 	for i := 0; i < board.Height; i++ {

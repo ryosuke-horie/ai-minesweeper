@@ -43,7 +43,7 @@ func TestGameWithHelpers(t *testing.T) {
 		// 事前定義されたシナリオを使用
 		board := testutil.CreateScenario(testutil.ComplexLogicPattern)
 		
-		g := testutil.NewGameBuilder().
+		_ = testutil.NewGameBuilder().
 			WithCustomBoard(board).
 			WithoutFirstClick().
 			Build()
