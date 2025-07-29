@@ -58,6 +58,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.solver = nil
 			m.cursor = game.Position{Row: 0, Col: 0}
 			m.aiThinking = false
+			m.pendingReveals = []game.Position{}
 
 		case "1":
 			m.game.Difficulty = game.Beginner
@@ -65,6 +66,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.solver = nil
 			m.cursor = game.Position{Row: 0, Col: 0}
 			m.aiThinking = false
+			m.pendingReveals = []game.Position{}
 
 		case "2":
 			m.game.Difficulty = game.Intermediate
@@ -72,6 +74,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.solver = nil
 			m.cursor = game.Position{Row: 0, Col: 0}
 			m.aiThinking = false
+			m.pendingReveals = []game.Position{}
 
 		case "3":
 			m.game.Difficulty = game.Expert
@@ -79,10 +82,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.solver = nil
 			m.cursor = game.Position{Row: 0, Col: 0}
 			m.aiThinking = false
+			m.pendingReveals = []game.Position{}
 		}
 
 	case solverMsg:
-		m.aiThinking = false
 		result := msg.result
 
 		for _, minePos := range result.MineCells {
@@ -92,15 +95,30 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		for _, safePos := range result.SafeCells {
-			m.game.Board.RevealCell(safePos)
+		if len(result.SafeCells) > 0 {
+			m.pendingReveals = result.SafeCells
+			return m, revealNextCell(result.SafeCells, 0)
+		} else {
+			m.aiThinking = false
 		}
 
-		if m.game.Board.CountUnrevealedSafeCells() == 0 {
-			m.game.State = game.Won
-		} else if len(result.SafeCells) > 0 {
-			m.aiThinking = true
-			return m, m.runSolver()
+	case revealCellMsg:
+		if msg.index < len(msg.positions) {
+			pos := msg.positions[msg.index]
+			m.game.Board.RevealCell(pos)
+			
+			if m.game.Board.CountUnrevealedSafeCells() == 0 {
+				m.game.State = game.Won
+				m.aiThinking = false
+				return m, nil
+			}
+			
+			if msg.index+1 < len(msg.positions) {
+				return m, revealNextCell(msg.positions, msg.index+1)
+			} else {
+				m.aiThinking = true
+				return m, m.runSolver()
+			}
 		}
 
 	case tickMsg:

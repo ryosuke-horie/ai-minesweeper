@@ -14,22 +14,29 @@ type solverMsg struct {
 	result solver.SolverResult
 }
 
+type revealCellMsg struct {
+	positions []game.Position
+	index     int
+}
+
 type Model struct {
-	game       *game.Game
-	solver     *solver.Solver
-	cursor     game.Position
-	aiThinking bool
-	lastUpdate time.Time
+	game           *game.Game
+	solver         *solver.Solver
+	cursor         game.Position
+	aiThinking     bool
+	lastUpdate     time.Time
+	pendingReveals []game.Position
 }
 
 func NewModel() Model {
 	g := game.NewGame(game.Beginner)
 	return Model{
-		game:       g,
-		solver:     nil,
-		cursor:     game.Position{Row: 0, Col: 0},
-		aiThinking: false,
-		lastUpdate: time.Now(),
+		game:           g,
+		solver:         nil,
+		cursor:         game.Position{Row: 0, Col: 0},
+		aiThinking:     false,
+		lastUpdate:     time.Now(),
+		pendingReveals: []game.Position{},
 	}
 }
 
@@ -52,4 +59,10 @@ func (m *Model) runSolver() tea.Cmd {
 		result := s.Solve()
 		return solverMsg{result: result}
 	}
+}
+
+func revealNextCell(positions []game.Position, index int) tea.Cmd {
+	return tea.Tick(time.Millisecond*50, func(t time.Time) tea.Msg {
+		return revealCellMsg{positions: positions, index: index}
+	})
 }
