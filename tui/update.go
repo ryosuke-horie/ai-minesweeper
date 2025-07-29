@@ -41,10 +41,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case " ", "space", "enter":
 			if m.game.State == game.Playing {
-				m.game.Click(m.cursor)
-				if m.game.State == game.Playing {
-					m.aiThinking = true
-					return m, m.runSolver()
+				cell := m.game.Board.GetCell(m.cursor)
+				if cell != nil && !cell.IsRevealed {
+					m.game.Click(m.cursor)
+					if m.game.State == game.Playing {
+						m.aiThinking = true
+						return m, m.runSolver()
+					}
 				}
 			}
 
