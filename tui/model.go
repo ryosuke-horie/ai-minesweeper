@@ -62,7 +62,7 @@ func (m *Model) runSolver() tea.Cmd {
 }
 
 func revealNextCell(positions []game.Position, index int) tea.Cmd {
-	return tea.Tick(time.Millisecond*50, func(t time.Time) tea.Msg {
+	return tea.Tick(time.Millisecond*200, func(t time.Time) tea.Msg {
 		return revealCellMsg{positions: positions, index: index}
 	})
 }
