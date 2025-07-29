@@ -1,5 +1,7 @@
 package game
 
+import "time"
+
 type GameState int
 
 const (
@@ -104,5 +106,5 @@ func (g *Game) revealAllMines() {
 }
 
 func getCurrentTime() int64 {
-	return 0
+	return time.Now().Unix()
 }
