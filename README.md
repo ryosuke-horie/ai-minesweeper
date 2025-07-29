@@ -30,3 +30,19 @@ go build -o ai-minesweeper
 ## 必要環境
 
 - Go 1.21以上
+
+## 開発
+
+```bash
+# 開発環境のセットアップ（初回のみ）
+make setup
+
+# コードチェック（fmt + lint + test）
+make check
+
+# 個別実行
+make fmt    # コードフォーマット
+make lint   # lintチェック
+make test   # テスト実行
+make build  # ビルド
+```
