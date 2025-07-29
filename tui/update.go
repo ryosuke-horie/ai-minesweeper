@@ -2,6 +2,7 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/r-horie/ai-minesweeper/game"
 )
 
@@ -109,13 +110,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.index < len(msg.positions) {
 			pos := msg.positions[msg.index]
 			m.game.Board.RevealCell(pos)
-			
+
 			if m.game.Board.CountUnrevealedSafeCells() == 0 {
 				m.game.State = game.Won
 				m.aiThinking = false
 				return m, nil
 			}
-			
+
 			if msg.index+1 < len(msg.positions) {
 				return m, revealNextCell(msg.positions, msg.index+1)
 			} else {

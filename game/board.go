@@ -2,7 +2,6 @@ package game
 
 import (
 	"math/rand"
-	"time"
 )
 
 type Position struct {
@@ -39,7 +38,6 @@ func NewBoard(width, height, mines int) *Board {
 }
 
 func (b *Board) Initialize(firstClick Position) {
-	rand.Seed(time.Now().UnixNano())
 
 	mineCount := 0
 	for mineCount < b.Mines {

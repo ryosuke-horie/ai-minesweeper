@@ -19,22 +19,22 @@ var (
 			Height(1).
 			Align(lipgloss.Center)
 
-	unrevealedStyle = cellStyle.Copy().
+	unrevealedStyle = cellStyle.
 			Background(lipgloss.Color("238")).
 			Foreground(lipgloss.Color("250"))
 
-	revealedStyle = cellStyle.Copy().
+	revealedStyle = cellStyle.
 			Background(lipgloss.Color("235"))
 
-	cursorStyle = cellStyle.Copy().
+	cursorStyle = cellStyle.
 			Background(lipgloss.Color("33")).
 			Foreground(lipgloss.Color("231"))
 
-	mineStyle = cellStyle.Copy().
+	mineStyle = cellStyle.
 			Background(lipgloss.Color("196")).
 			Foreground(lipgloss.Color("231"))
 
-	flagStyle = cellStyle.Copy().
+	flagStyle = cellStyle.
 			Background(lipgloss.Color("238")).
 			Foreground(lipgloss.Color("226"))
 
@@ -69,5 +69,5 @@ func getNumberStyle(num int) lipgloss.Style {
 	if !ok {
 		color = lipgloss.Color("250")
 	}
-	return revealedStyle.Copy().Foreground(color)
+	return revealedStyle.Foreground(color)
 }
