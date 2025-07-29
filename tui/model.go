@@ -48,10 +48,8 @@ func tickCmd() tea.Cmd {
 
 func (m *Model) runSolver() tea.Cmd {
 	return func() tea.Msg {
-		if m.solver == nil {
-			m.solver = solver.NewSolver(m.game.Board)
-		}
-		result := m.solver.Solve()
+		s := solver.NewSolver(m.game.Board)
+		result := s.Solve()
 		return solverMsg{result: result}
 	}
 }
