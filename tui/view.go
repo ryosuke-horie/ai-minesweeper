@@ -74,7 +74,7 @@ func (m Model) renderCell(pos game.Position) string {
 	} else if cell.IsFlagged {
 		style = flagStyle
 		if isCursor {
-			style = style.Copy().Background(lipgloss.Color("33"))
+			style = style.Background(lipgloss.Color("33"))
 		}
 		content = "F"
 	} else if !cell.IsRevealed {
@@ -89,13 +89,13 @@ func (m Model) renderCell(pos game.Position) string {
 	} else if cell.Adjacent == 0 {
 		style = revealedStyle
 		if isCursor {
-			style = style.Copy().Background(lipgloss.Color("239"))
+			style = style.Background(lipgloss.Color("239"))
 		}
 		content = " "
 	} else {
 		style = getNumberStyle(cell.Adjacent)
 		if isCursor {
-			style = style.Copy().Background(lipgloss.Color("239"))
+			style = style.Background(lipgloss.Color("239"))
 		}
 		content = fmt.Sprintf("%d", cell.Adjacent)
 	}
