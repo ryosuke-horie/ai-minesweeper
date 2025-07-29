@@ -4,6 +4,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/r-horie/ai-minesweeper/game"
 	"github.com/r-horie/ai-minesweeper/solver"
 )
