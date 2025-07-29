@@ -11,12 +11,14 @@ type SolverResult struct {
 }
 
 type Solver struct {
-	board *game.Board
+	board         *game.Board
+	virtualRevealed map[game.Position]bool
 }
 
 func NewSolver(board *game.Board) *Solver {
 	return &Solver{
-		board: board,
+		board:           board,
+		virtualRevealed: make(map[game.Position]bool),
 	}
 }
 
@@ -27,21 +29,33 @@ func (s *Solver) Solve() SolverResult {
 		CanProgress: false,
 	}
 
-	changed := true
-	for changed {
-		changed = false
+	iteration := 0
+	maxIterations := 100
 
+	for iteration < maxIterations {
+		iteration++
+		
 		mines := s.findDefiniteMines()
-		if len(mines) > 0 {
-			result.MineCells = append(result.MineCells, mines...)
-			changed = true
+		for _, mine := range mines {
+			if !containsPosition(result.MineCells, mine) {
+				result.MineCells = append(result.MineCells, mine)
+			}
 		}
 
 		safes := s.findDefiniteSafeCells()
-		if len(safes) > 0 {
-			result.SafeCells = append(result.SafeCells, safes...)
-			changed = true
+		newSafes := []game.Position{}
+		for _, safe := range safes {
+			if !s.virtualRevealed[safe] && !containsPosition(result.SafeCells, safe) {
+				newSafes = append(newSafes, safe)
+				s.virtualRevealed[safe] = true
+			}
 		}
+
+		if len(newSafes) == 0 {
+			break
+		}
+
+		result.SafeCells = append(result.SafeCells, newSafes...)
 	}
 
 	result.CanProgress = len(result.SafeCells) > 0
@@ -69,7 +83,7 @@ func (s *Solver) findDefiniteMines() []game.Position {
 			if unrevealed == cell.Adjacent-flagged && unrevealed > 0 {
 				for _, adjPos := range s.board.GetAdjacentPositions(pos) {
 					adjCell := s.board.GetCell(adjPos)
-					if adjCell != nil && !adjCell.IsRevealed && !adjCell.IsFlagged {
+					if adjCell != nil && !adjCell.IsRevealed && !adjCell.IsFlagged && !s.virtualRevealed[adjPos] {
 						if !containsPosition(mines, adjPos) {
 							mines = append(mines, adjPos)
 						}
@@ -104,7 +118,7 @@ func (s *Solver) findDefiniteSafeCells() []game.Position {
 			if mineCount == cell.Adjacent && unrevealed > 0 {
 				for _, adjPos := range s.board.GetAdjacentPositions(pos) {
 					adjCell := s.board.GetCell(adjPos)
-					if adjCell != nil && !adjCell.IsRevealed && !adjCell.IsFlagged && !s.isKnownMine(adjPos) {
+					if adjCell != nil && !adjCell.IsRevealed && !adjCell.IsFlagged && !s.isKnownMine(adjPos) && !s.virtualRevealed[adjPos] {
 						if !containsPosition(safes, adjPos) {
 							safes = append(safes, adjPos)
 						}
@@ -120,7 +134,7 @@ func (s *Solver) findDefiniteSafeCells() []game.Position {
 func (s *Solver) getUnrevealedAndFlaggedCounts(pos game.Position) (unrevealed, flagged int) {
 	for _, adjPos := range s.board.GetAdjacentPositions(pos) {
 		cell := s.board.GetCell(adjPos)
-		if cell != nil && !cell.IsRevealed {
+		if cell != nil && !cell.IsRevealed && !s.virtualRevealed[adjPos] {
 			unrevealed++
 			if cell.IsFlagged {
 				flagged++

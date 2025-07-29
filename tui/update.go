@@ -39,7 +39,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor.Col++
 			}
 
-		case " ", "enter":
+		case " ", "space", "enter":
 			if m.game.State == game.Playing {
 				m.game.Click(m.cursor)
 				if m.game.State == game.Playing {
