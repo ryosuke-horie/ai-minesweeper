@@ -89,17 +89,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		if len(result.SafeCells) > 0 {
-			for _, safePos := range result.SafeCells {
-				m.game.Board.RevealCell(safePos)
-			}
+		for _, safePos := range result.SafeCells {
+			m.game.Board.RevealCell(safePos)
+		}
 
-			if m.game.Board.CountUnrevealedSafeCells() == 0 {
-				m.game.State = game.Won
-			} else if result.CanProgress {
-				m.aiThinking = true
-				return m, m.runSolver()
-			}
+		if m.game.Board.CountUnrevealedSafeCells() == 0 {
+			m.game.State = game.Won
+		} else if len(result.SafeCells) > 0 {
+			m.aiThinking = true
+			return m, m.runSolver()
 		}
 
 	case tickMsg:

@@ -18,9 +18,9 @@ type Difficulty struct {
 }
 
 var (
-	Beginner     = Difficulty{"Beginner", 9, 9, 10}
-	Intermediate = Difficulty{"Intermediate", 16, 16, 40}
-	Expert       = Difficulty{"Expert", 30, 16, 99}
+	Beginner     = Difficulty{"初級", 9, 9, 10}
+	Intermediate = Difficulty{"中級", 16, 16, 40}
+	Expert       = Difficulty{"上級", 30, 16, 99}
 )
 
 type Game struct {

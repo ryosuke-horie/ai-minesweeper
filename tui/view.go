@@ -22,7 +22,7 @@ func (m Model) View() string {
 }
 
 func (m Model) renderTitle() string {
-	return titleStyle.Render("AI Minesweeper - Spoiled by AI")
+	return titleStyle.Render("AIマインスイーパー - AIにネタバレされるマインスイーパー")
 }
 
 func (m Model) renderHeader() string {
@@ -32,7 +32,7 @@ func (m Model) renderHeader() string {
 		elapsed = 0
 	}
 
-	header := fmt.Sprintf("Mines: %d  Time: %02d:%02d  Difficulty: %s",
+	header := fmt.Sprintf("地雷: %d  時間: %02d:%02d  難易度: %s",
 		remainingMines,
 		elapsed/60,
 		elapsed%60,
@@ -107,14 +107,14 @@ func (m Model) renderStatus() string {
 	var status string
 	switch m.game.State {
 	case game.Won:
-		status = gameWonStyle.Render("🎉 Congratulations! You won!")
+		status = gameWonStyle.Render("🎉 おめでとうございます！クリアしました！")
 	case game.Lost:
-		status = gameOverStyle.Render("💥 Game Over! You hit a mine!")
+		status = gameOverStyle.Render("💥 ゲームオーバー！地雷を踏みました！")
 	default:
 		if m.aiThinking {
-			status = headerStyle.Render("🤖 AI is thinking...")
+			status = headerStyle.Render("🤖 AIが考え中...")
 		} else {
-			status = headerStyle.Render("Your turn! Choose wisely...")
+			status = headerStyle.Render("あなたの番です！運命の選択を...")
 		}
 	}
 	return status
@@ -122,12 +122,12 @@ func (m Model) renderStatus() string {
 
 func (m Model) renderHelp() string {
 	help := []string{
-		"[↑↓←→] Move cursor",
-		"[Space] Reveal cell",
-		"[f] Toggle flag",
-		"[r] New game",
-		"[1/2/3] Difficulty",
-		"[q] Quit",
+		"[↑↓←→] カーソル移動",
+		"[スペース] マスを開く",
+		"[f] 旗を立てる",
+		"[r] 新しいゲーム",
+		"[1/2/3] 難易度変更",
+		"[q] 終了",
 	}
 	return helpStyle.Render(strings.Join(help, "  "))
 }
