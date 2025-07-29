@@ -96,7 +96,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if m.game.Board.CountUnrevealedSafeCells() == 0 {
 				m.game.State = game.Won
-			} else {
+			} else if result.CanProgress {
 				m.aiThinking = true
 				return m, m.runSolver()
 			}
