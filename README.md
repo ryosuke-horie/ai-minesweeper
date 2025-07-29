@@ -1,5 +1,7 @@
 # AIマインスイーパー
 
+[Minesweeper spoiled by AI](https://github.com/GRA0007/minesweeper-spoiled-by-ai)のバイブコーディング練習作品です。
+
 AIにネタバレされるマインスイーパー。論理的に確定できるマスはAIが自動で開き、運が絡む部分だけプレイヤーが選択します。
 
 ## インストール
