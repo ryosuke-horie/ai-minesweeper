@@ -98,7 +98,7 @@ func (s *Solver) findDefiniteSafeCells() []game.Position {
 				continue
 			}
 
-			unrevealed, flagged := s.getUnrevealedAndFlaggedCounts(pos)
+			unrevealed, _ := s.getUnrevealedAndFlaggedCounts(pos)
 			mineCount := s.getKnownMineCount(pos)
 
 			if mineCount == cell.Adjacent && unrevealed > 0 {
