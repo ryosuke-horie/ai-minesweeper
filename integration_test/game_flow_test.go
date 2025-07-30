@@ -8,7 +8,7 @@ import (
 	"github.com/r-horie/ai-minesweeper/testutil"
 )
 
-// TestGameFlowComplete ゲーム開始から終了までの完全なフローをテスト
+// TestGameFlowComplete ゲーム開始から終了までの完全なフローをテスト.
 func TestGameFlowComplete(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -40,7 +40,7 @@ func TestGameFlowComplete(t *testing.T) {
 	}
 }
 
-// playBeginnerGame 初級ゲームのシナリオ
+// playBeginnerGame 初級ゲームのシナリオ.
 func playBeginnerGame(t *testing.T, g *game.Game) {
 	// 初期状態の確認
 	if g.State != game.Playing {
@@ -96,7 +96,7 @@ func playBeginnerGame(t *testing.T, g *game.Game) {
 	}
 }
 
-// playIntermediateGame 中級ゲームのシナリオ
+// playIntermediateGame 中級ゲームのシナリオ.
 func playIntermediateGame(t *testing.T, g *game.Game) {
 	// より大きな盤面での初回クリック
 	firstClickPos := game.Position{Row: 8, Col: 8}
@@ -134,7 +134,7 @@ func playIntermediateGame(t *testing.T, g *game.Game) {
 	}
 }
 
-// playExpertGame 上級ゲームのシナリオ
+// playExpertGame 上級ゲームのシナリオ.
 func playExpertGame(t *testing.T, g *game.Game) {
 	// 大きな盤面でのテスト
 	if g.Board.Width != 30 || g.Board.Height != 16 {
@@ -155,7 +155,7 @@ func playExpertGame(t *testing.T, g *game.Game) {
 	}
 }
 
-// TestGameWithAISolver ゲームとAIソルバーの連携テスト
+// TestGameWithAISolver ゲームとAIソルバーの連携テスト.
 func TestGameWithAISolver(t *testing.T) {
 	// カスタムボードで確実に解けるパターンを作成
 	board := testutil.NewBoardBuilder(5, 5, 5).
@@ -179,7 +179,7 @@ func TestGameWithAISolver(t *testing.T) {
 
 	for g.State == game.Playing && iterations < maxIterations {
 		iterations++
-		
+
 		s := solver.NewSolver(g.Board)
 		result := s.Solve()
 
@@ -194,7 +194,7 @@ func TestGameWithAISolver(t *testing.T) {
 				oldRevealed := testutil.CountRevealed(g.Board)
 				g.Click(pos)
 				newRevealed := testutil.CountRevealed(g.Board)
-				
+
 				if newRevealed <= oldRevealed {
 					t.Errorf("Click on safe cell should reveal at least one cell")
 				}
@@ -221,7 +221,7 @@ func TestGameWithAISolver(t *testing.T) {
 	t.Logf("Final board:\n%s", testutil.DisplayBoard(g.Board))
 }
 
-// TestDifficultyTransitions 難易度切り替えのテスト
+// TestDifficultyTransitions 難易度切り替えのテスト.
 func TestDifficultyTransitions(t *testing.T) {
 	difficulties := []game.Difficulty{
 		game.Beginner,
@@ -238,13 +238,13 @@ func TestDifficultyTransitions(t *testing.T) {
 			t.Run(fromDiff.Name+"_to_"+toDiff.Name, func(t *testing.T) {
 				// 最初の難易度でゲーム開始
 				g := game.NewGame(fromDiff)
-				
+
 				// いくつかクリック
 				g.Click(game.Position{Row: 0, Col: 0})
-				
+
 				// 難易度を変更（新しいゲームを作成）
 				g = game.NewGame(toDiff)
-				
+
 				// 新しい難易度が適用されているか確認
 				if g.Board.Width != toDiff.Width {
 					t.Errorf("Width = %d, want %d", g.Board.Width, toDiff.Width)
@@ -255,7 +255,7 @@ func TestDifficultyTransitions(t *testing.T) {
 				if g.Board.Mines != toDiff.Mines {
 					t.Errorf("Mines = %d, want %d", g.Board.Mines, toDiff.Mines)
 				}
-				
+
 				// ゲームがリセットされているか確認
 				if g.State != game.Playing {
 					t.Error("New game should be in Playing state")
@@ -268,58 +268,58 @@ func TestDifficultyTransitions(t *testing.T) {
 	}
 }
 
-// TestResetBehavior リセット機能の詳細なテスト
+// TestResetBehavior リセット機能の詳細なテスト.
 func TestResetBehavior(t *testing.T) {
 	g := game.NewGame(game.Beginner)
-	
+
 	// ゲームを進める
 	g.Click(game.Position{Row: 4, Col: 4})
 	g.ToggleFlag(game.Position{Row: 0, Col: 0})
 	g.ToggleFlag(game.Position{Row: 1, Col: 1})
-	
+
 	// 状態を記録
 	oldBoard := g.Board
 	flagCount := testutil.CountFlagged(g.Board)
-	
+
 	// デバッグ情報
 	t.Logf("Flag count: %d", flagCount)
 	t.Logf("Cell[0,0] IsFlagged: %v, IsRevealed: %v", g.Board.Cells[0][0].IsFlagged, g.Board.Cells[0][0].IsRevealed)
 	t.Logf("Cell[1,1] IsFlagged: %v, IsRevealed: %v", g.Board.Cells[1][1].IsFlagged, g.Board.Cells[1][1].IsRevealed)
-	
+
 	if flagCount != 2 {
 		t.Error("Should have 2 flags before reset")
 	}
-	
+
 	// リセット
 	g.Reset()
-	
+
 	// リセット後の確認
 	if g.Board == oldBoard {
 		t.Error("Reset should create a new board instance")
 	}
-	
+
 	if g.State != game.Playing {
 		t.Error("Reset should set state to Playing")
 	}
-	
+
 	if !g.FirstClick {
 		t.Error("Reset should set FirstClick to true")
 	}
-	
+
 	if testutil.CountFlagged(g.Board) != 0 {
 		t.Error("Reset should clear all flags")
 	}
-	
+
 	if testutil.CountRevealed(g.Board) != 0 {
 		t.Error("Reset should clear all revealed cells")
 	}
-	
+
 	if g.ElapsedTime != 0 {
 		t.Error("Reset should clear elapsed time")
 	}
 }
 
-// TestConcurrentGames 複数ゲームの同時実行テスト
+// TestConcurrentGames 複数ゲームの同時実行テスト.
 func TestConcurrentGames(t *testing.T) {
 	// 異なる難易度で複数のゲームを作成
 	games := []*game.Game{
@@ -327,7 +327,7 @@ func TestConcurrentGames(t *testing.T) {
 		game.NewGame(game.Intermediate),
 		game.NewGame(game.Expert),
 	}
-	
+
 	// 各ゲームで異なる操作を実行
 	for i, g := range games {
 		// 異なる位置をクリック
@@ -335,7 +335,7 @@ func TestConcurrentGames(t *testing.T) {
 		if g.Board.IsValidPosition(clickPos) {
 			g.Click(clickPos)
 		}
-		
+
 		// 各ゲームが独立していることを確認
 		for j, other := range games {
 			if i != j {

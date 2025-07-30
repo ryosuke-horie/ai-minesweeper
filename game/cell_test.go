@@ -64,28 +64,28 @@ func TestCell_Reveal(t *testing.T) {
 
 func TestCell_ToggleFlag(t *testing.T) {
 	tests := []struct {
-		name         string
-		isRevealed   bool
-		initialFlag  bool
-		wantFlag     bool
+		name        string
+		isRevealed  bool
+		initialFlag bool
+		wantFlag    bool
 	}{
 		{
-			name:         "toggle flag on unrevealed cell",
-			isRevealed:   false,
-			initialFlag:  false,
-			wantFlag:     true,
+			name:        "toggle flag on unrevealed cell",
+			isRevealed:  false,
+			initialFlag: false,
+			wantFlag:    true,
 		},
 		{
-			name:         "untoggle flag on unrevealed cell",
-			isRevealed:   false,
-			initialFlag:  true,
-			wantFlag:     false,
+			name:        "untoggle flag on unrevealed cell",
+			isRevealed:  false,
+			initialFlag: true,
+			wantFlag:    false,
 		},
 		{
-			name:         "cannot toggle flag on revealed cell",
-			isRevealed:   true,
-			initialFlag:  false,
-			wantFlag:     false,
+			name:        "cannot toggle flag on revealed cell",
+			isRevealed:  true,
+			initialFlag: false,
+			wantFlag:    false,
 		},
 	}
 

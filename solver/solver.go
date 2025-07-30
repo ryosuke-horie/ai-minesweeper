@@ -72,7 +72,7 @@ func (s *Solver) findDefiniteMines() []game.Position {
 	return mines
 }
 
-func (s *Solver) findDefiniteSafeCells() []game.Position {
+func (s *Solver) findDefiniteSafeCells() []game.Position { //nolint:gocyclo // アルゴリズムの性質上複雑
 	safes := []game.Position{}
 
 	for row := 0; row < s.board.Height; row++ {

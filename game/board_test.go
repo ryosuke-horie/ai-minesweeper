@@ -142,9 +142,9 @@ func TestBoard_IsValidPosition(t *testing.T) {
 	board := NewBoard(5, 5, 5)
 
 	tests := []struct {
-		name  string
-		pos   Position
-		want  bool
+		name string
+		pos  Position
+		want bool
 	}{
 		{
 			name: "valid center",
@@ -328,7 +328,7 @@ func TestBoard_Initialize(t *testing.T) {
 	}
 }
 
-// テスト用のヘルパー関数
+// テスト用のヘルパー関数.
 func countAdjacentMinesForTest(board *Board, pos Position) int {
 	count := 0
 	for _, adjPos := range board.GetAdjacentPositions(pos) {
@@ -341,11 +341,11 @@ func countAdjacentMinesForTest(board *Board, pos Position) int {
 
 func TestBoard_RevealCell(t *testing.T) {
 	tests := []struct {
-		name           string
-		setupBoard     func() *Board
-		revealPos      Position
-		wantHitMine    bool
-		wantRevealed   []Position
+		name         string
+		setupBoard   func() *Board
+		revealPos    Position
+		wantHitMine  bool
+		wantRevealed []Position
 	}{
 		{
 			name: "reveal safe cell with adjacent mines",

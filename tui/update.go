@@ -6,7 +6,7 @@ import (
 	"github.com/r-horie/ai-minesweeper/game"
 )
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) { //nolint:gocyclo // UIの処理は多くの分岐が必要
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -19,7 +19,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch msg.String() {
-
 		case "up", "k":
 			if m.cursor.Row > 0 {
 				m.cursor.Row--

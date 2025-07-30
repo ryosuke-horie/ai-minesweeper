@@ -4,23 +4,23 @@ import (
 	"github.com/r-horie/ai-minesweeper/game"
 )
 
-// ScenarioType テストシナリオの種類
+// ScenarioType テストシナリオの種類.
 type ScenarioType int
 
 const (
-	// SimpleNumberPattern 単純な数字パターン
+	// SimpleNumberPattern 単純な数字パターン.
 	SimpleNumberPattern ScenarioType = iota
-	// CornerMinePattern コーナーの地雷パターン
+	// CornerMinePattern コーナーの地雷パターン.
 	CornerMinePattern
-	// ChainReactionPattern 連鎖反応パターン
+	// ChainReactionPattern 連鎖反応パターン.
 	ChainReactionPattern
-	// ComplexLogicPattern 複雑な論理パターン
+	// ComplexLogicPattern 複雑な論理パターン.
 	ComplexLogicPattern
-	// AlmostCompletePattern ほぼ完成したゲーム
+	// AlmostCompletePattern ほぼ完成したゲーム.
 	AlmostCompletePattern
 )
 
-// CreateScenario 事前定義されたシナリオを作成
+// CreateScenario 事前定義されたシナリオを作成.
 func CreateScenario(scenarioType ScenarioType) *game.Board {
 	switch scenarioType {
 	case SimpleNumberPattern:
@@ -38,7 +38,7 @@ func CreateScenario(scenarioType ScenarioType) *game.Board {
 	}
 }
 
-// createSimpleNumberPattern 1-2-1パターン
+// createSimpleNumberPattern 1-2-1パターン.
 func createSimpleNumberPattern() *game.Board {
 	pattern := []string{
 		"...",
@@ -50,7 +50,7 @@ func createSimpleNumberPattern() *game.Board {
 		Build()
 }
 
-// createCornerMinePattern コーナーに地雷
+// createCornerMinePattern コーナーに地雷.
 func createCornerMinePattern() *game.Board {
 	pattern := []string{
 		"*21.",
@@ -63,7 +63,7 @@ func createCornerMinePattern() *game.Board {
 		Build()
 }
 
-// createChainReactionPattern 連鎖反応をテスト
+// createChainReactionPattern 連鎖反応をテスト.
 func createChainReactionPattern() *game.Board {
 	pattern := []string{
 		".....",
@@ -77,7 +77,7 @@ func createChainReactionPattern() *game.Board {
 		Build()
 }
 
-// createComplexLogicPattern AIの推論が必要なパターン
+// createComplexLogicPattern AIの推論が必要なパターン.
 func createComplexLogicPattern() *game.Board {
 	pattern := []string{
 		"?????",
@@ -91,7 +91,7 @@ func createComplexLogicPattern() *game.Board {
 		Build()
 }
 
-// createAlmostCompletePattern ほぼクリア状態
+// createAlmostCompletePattern ほぼクリア状態.
 func createAlmostCompletePattern() *game.Board {
 	pattern := []string{
 		"11111",
@@ -108,7 +108,7 @@ func createAlmostCompletePattern() *game.Board {
 	return board
 }
 
-// GameScenario ゲーム全体のシナリオ
+// GameScenario ゲーム全体のシナリオ.
 type GameScenario struct {
 	Name        string
 	Description string
@@ -117,13 +117,13 @@ type GameScenario struct {
 	Expected    GameExpectation
 }
 
-// GameAction ゲームに対するアクション
+// GameAction ゲームに対するアクション.
 type GameAction struct {
 	Type     ActionType
 	Position game.Position
 }
 
-// ActionType アクションの種類
+// ActionType アクションの種類.
 type ActionType int
 
 const (
@@ -132,7 +132,7 @@ const (
 	Reset
 )
 
-// GameExpectation 期待される結果
+// GameExpectation 期待される結果.
 type GameExpectation struct {
 	State          game.GameState
 	RevealedCount  int
@@ -140,7 +140,7 @@ type GameExpectation struct {
 	RemainingMines int
 }
 
-// CreateGameScenarios よく使うゲームシナリオのセット
+// CreateGameScenarios よく使うゲームシナリオのセット.
 func CreateGameScenarios() []GameScenario {
 	return []GameScenario{
 		{

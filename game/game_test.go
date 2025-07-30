@@ -199,7 +199,7 @@ func TestGame_ToggleFlag(t *testing.T) {
 
 // Phase 2 Tests
 
-func TestGame_Click(t *testing.T) {
+func TestGame_Click(t *testing.T) { //nolint:gocyclo // テストケースが多いため複雑度が高い
 	tests := []struct {
 		name           string
 		setupGame      func() *Game
@@ -222,7 +222,7 @@ func TestGame_Click(t *testing.T) {
 				if cell.IsMine {
 					t.Error("First click position has mine")
 				}
-				
+
 				// 隣接セルに地雷がないことを確認
 				for _, adjPos := range board.GetAdjacentPositions(Position{Row: 4, Col: 4}) {
 					adjCell := board.GetCell(adjPos)
@@ -230,7 +230,7 @@ func TestGame_Click(t *testing.T) {
 						t.Errorf("Adjacent position %v to first click has mine", adjPos)
 					}
 				}
-				
+
 				// タイマーが開始されたことを確認
 				// ※実際のテストでは時間の確認が難しいので、FirstClickがfalseになったことで代用
 			},
@@ -271,7 +271,7 @@ func TestGame_Click(t *testing.T) {
 				game.Board.Cells[1][0].SetAdjacent(1)
 				game.Board.Cells[1][1].SetAdjacent(1)
 				game.FirstClick = false
-				
+
 				// 地雷以外をすべて開く（最後の1つを残す）
 				for i := 0; i < 3; i++ {
 					for j := 0; j < 3; j++ {
@@ -325,7 +325,7 @@ func TestGame_Click(t *testing.T) {
 				game.Board.Cells[1][4].SetMine()
 				game.Board.Cells[3][4].SetMine()
 				game.Board.Cells[4][4].SetMine()
-				
+
 				// 隣接数を手動で設定
 				game.Board.Cells[0][3].SetAdjacent(2)
 				game.Board.Cells[1][3].SetAdjacent(2)
@@ -333,7 +333,7 @@ func TestGame_Click(t *testing.T) {
 				game.Board.Cells[2][4].SetAdjacent(3)
 				game.Board.Cells[3][3].SetAdjacent(2)
 				game.Board.Cells[4][3].SetAdjacent(2)
-				
+
 				game.FirstClick = false
 				return game
 			},
@@ -347,7 +347,7 @@ func TestGame_Click(t *testing.T) {
 					{1, 0}, {1, 1}, {1, 2},
 					{2, 0}, {2, 1}, {2, 2},
 				}
-				
+
 				for _, pos := range expectedRevealed {
 					cell := board.GetCell(pos)
 					if cell != nil && !cell.IsRevealed {
@@ -361,20 +361,20 @@ func TestGame_Click(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			game := tt.setupGame()
-			
+
 			// クリック実行
 			game.Click(tt.clickPos)
-			
+
 			// 状態の確認
 			if game.State != tt.wantState {
 				t.Errorf("State = %v, want %v", game.State, tt.wantState)
 			}
-			
+
 			// FirstClickの確認（該当する場合）
 			if tt.wantFirstClick && game.FirstClick != tt.wantFirstClick {
 				t.Errorf("FirstClick = %v, want %v", game.FirstClick, tt.wantFirstClick)
 			}
-			
+
 			// ボードの状態を確認
 			if tt.checkBoard != nil {
 				tt.checkBoard(t, game.Board)
@@ -399,14 +399,14 @@ func TestGame_StateTransitions(t *testing.T) {
 				game.Board.Cells[1][0].SetAdjacent(1)
 				game.Board.Cells[1][1].SetAdjacent(1)
 				game.FirstClick = false
-				
+
 				// 安全なセルをすべてクリック
 				positions := []Position{
 					{0, 1}, {0, 2},
 					{1, 0}, {1, 1}, {1, 2},
 					{2, 0}, {2, 1}, {2, 2},
 				}
-				
+
 				for _, pos := range positions {
 					game.Click(pos)
 					if game.State == Won {
@@ -423,7 +423,7 @@ func TestGame_StateTransitions(t *testing.T) {
 				game.Board = NewBoard(3, 3, 1)
 				game.Board.Cells[1][1].SetMine()
 				game.FirstClick = false
-				
+
 				// 地雷をクリック
 				game.Click(Position{Row: 1, Col: 1})
 			},
@@ -451,10 +451,10 @@ func TestGame_StateTransitions(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			game := NewGame(Beginner)
-			
+
 			// シナリオ実行
 			tt.scenario(t, game)
-			
+
 			// 最終状態の確認
 			if game.State != tt.wantState {
 				t.Errorf("Final state = %v, want %v", game.State, tt.wantState)
@@ -473,13 +473,13 @@ func TestGame_EdgeCases(t *testing.T) {
 			scenario: func(t *testing.T) {
 				game := NewGame(Beginner)
 				pos := Position{Row: 1, Col: 1}
-				
+
 				// フラグを設定
 				game.ToggleFlag(pos)
-				
+
 				// フラグがあるセルをクリック
 				game.Click(pos)
-				
+
 				// セルが開かれていないことを確認
 				cell := game.Board.GetCell(pos)
 				if cell != nil && cell.IsRevealed {
@@ -494,14 +494,14 @@ func TestGame_EdgeCases(t *testing.T) {
 				game.Board = NewBoard(3, 3, 0) // 地雷なし
 				game.FirstClick = false
 				pos := Position{Row: 1, Col: 1}
-				
+
 				// 同じセルを複数回クリック
 				game.Click(pos)
 				firstState := game.State
-				
+
 				game.Click(pos)
 				game.Click(pos)
-				
+
 				// 状態が変わらないことを確認
 				if game.State != firstState {
 					t.Error("Game state changed after multiple clicks on same cell")
@@ -512,7 +512,7 @@ func TestGame_EdgeCases(t *testing.T) {
 			name: "click outside board boundaries",
 			scenario: func(t *testing.T) {
 				game := NewGame(Beginner)
-				
+
 				// 境界外をクリック
 				invalidPositions := []Position{
 					{-1, 0},
@@ -520,10 +520,10 @@ func TestGame_EdgeCases(t *testing.T) {
 					{100, 0},
 					{0, 100},
 				}
-				
+
 				for _, pos := range invalidPositions {
 					game.Click(pos)
-					
+
 					// ゲームがクラッシュしないことを確認
 					if game.State != Playing {
 						t.Error("Game state changed after clicking outside boundaries")
