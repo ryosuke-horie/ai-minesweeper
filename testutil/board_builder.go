@@ -104,9 +104,8 @@ func (b *BoardBuilder) calculateAdjacents() {
 						count++
 					}
 				}
-				if count > 0 {
-					b.board.Cells[i][j].SetAdjacent(count)
-				}
+				// count が 0 でも設定する（空のセルも重要）
+				b.board.Cells[i][j].SetAdjacent(count)
 			}
 		}
 	}

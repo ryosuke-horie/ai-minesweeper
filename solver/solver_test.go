@@ -234,14 +234,18 @@ func TestSolver_Solve_ComplexScenarios(t *testing.T) {
 				board.Cells[1][1].IsRevealed = true
 				board.Cells[1][1].SetAdjacent(1)
 				
-				// 周囲8マスのうち7マスを開く
-				positions := []game.Position{
-					{0, 0}, {0, 1}, {0, 2},
-					{1, 0},         {1, 2},
-					{2, 0}, {2, 1},
+				// 周囲8マスのうち7マスを開く（数字を設定）
+				positions := []struct {
+					pos game.Position
+					adj int
+				}{
+					{game.Position{0, 0}, 1}, {game.Position{0, 1}, 1}, {game.Position{0, 2}, 1},
+					{game.Position{1, 0}, 1},                            {game.Position{1, 2}, 1},
+					{game.Position{2, 0}, 1}, {game.Position{2, 1}, 1},
 				}
-				for _, pos := range positions {
-					board.Cells[pos.Row][pos.Col].IsRevealed = true
+				for _, p := range positions {
+					board.Cells[p.pos.Row][p.pos.Col].IsRevealed = true
+					board.Cells[p.pos.Row][p.pos.Col].SetAdjacent(p.adj)
 				}
 				// [2,2]だけ未開放 → これが地雷
 				
@@ -249,7 +253,7 @@ func TestSolver_Solve_ComplexScenarios(t *testing.T) {
 			},
 			wantMines:    1, // [2,2]が地雷
 			wantSafes:    0, // 安全なセルは特定できない
-			wantProgress: false,
+			wantProgress: true, // 地雷が見つかるので進捗あり
 		},
 		{
 			name: "corner pattern",
@@ -259,15 +263,17 @@ func TestSolver_Solve_ComplexScenarios(t *testing.T) {
 				board.Cells[0][0].IsRevealed = true
 				board.Cells[0][0].SetAdjacent(1)
 				
-				// 隣接する2マスを開く
+				// 隣接する2マスを開く（数字を設定）
 				board.Cells[0][1].IsRevealed = true
+				board.Cells[0][1].SetAdjacent(1)
 				board.Cells[1][0].IsRevealed = true
+				board.Cells[1][0].SetAdjacent(1)
 				
 				return board
 			},
 			wantMines:    1, // [1,1]が地雷
 			wantSafes:    0,
-			wantProgress: false,
+			wantProgress: true, // 地雷が見つかるので進捗あり
 		},
 	}
 

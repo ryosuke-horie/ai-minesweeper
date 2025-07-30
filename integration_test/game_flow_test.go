@@ -281,6 +281,11 @@ func TestResetBehavior(t *testing.T) {
 	oldBoard := g.Board
 	flagCount := testutil.CountFlagged(g.Board)
 	
+	// デバッグ情報
+	t.Logf("Flag count: %d", flagCount)
+	t.Logf("Cell[0,0] IsFlagged: %v, IsRevealed: %v", g.Board.Cells[0][0].IsFlagged, g.Board.Cells[0][0].IsRevealed)
+	t.Logf("Cell[1,1] IsFlagged: %v, IsRevealed: %v", g.Board.Cells[1][1].IsFlagged, g.Board.Cells[1][1].IsRevealed)
+	
 	if flagCount != 2 {
 		t.Error("Should have 2 flags before reset")
 	}
