@@ -4,19 +4,19 @@ import (
 	"github.com/r-horie/ai-minesweeper/game"
 )
 
-// BoardBuilder はテスト用のボードを構築するためのビルダー
+// BoardBuilder はテスト用のボードを構築するためのビルダー.
 type BoardBuilder struct {
 	board *game.Board
 }
 
-// NewBoardBuilder は新しいBoardBuilderを作成
+// NewBoardBuilder は新しいBoardBuilderを作成.
 func NewBoardBuilder(width, height, mines int) *BoardBuilder {
 	return &BoardBuilder{
 		board: game.NewBoard(width, height, mines),
 	}
 }
 
-// WithMineAt 指定位置に地雷を配置
+// WithMineAt 指定位置に地雷を配置.
 func (b *BoardBuilder) WithMineAt(row, col int) *BoardBuilder {
 	if b.isValidPosition(row, col) {
 		b.board.Cells[row][col].SetMine()
@@ -24,7 +24,7 @@ func (b *BoardBuilder) WithMineAt(row, col int) *BoardBuilder {
 	return b
 }
 
-// WithRevealedAt 指定位置のセルを開く
+// WithRevealedAt 指定位置のセルを開く.
 func (b *BoardBuilder) WithRevealedAt(row, col int) *BoardBuilder {
 	if b.isValidPosition(row, col) {
 		b.board.Cells[row][col].IsRevealed = true
@@ -32,7 +32,7 @@ func (b *BoardBuilder) WithRevealedAt(row, col int) *BoardBuilder {
 	return b
 }
 
-// WithFlagAt 指定位置にフラグを配置
+// WithFlagAt 指定位置にフラグを配置.
 func (b *BoardBuilder) WithFlagAt(row, col int) *BoardBuilder {
 	if b.isValidPosition(row, col) {
 		b.board.Cells[row][col].IsFlagged = true
@@ -40,7 +40,7 @@ func (b *BoardBuilder) WithFlagAt(row, col int) *BoardBuilder {
 	return b
 }
 
-// WithAdjacentAt 指定位置の隣接数を設定
+// WithAdjacentAt 指定位置の隣接数を設定.
 func (b *BoardBuilder) WithAdjacentAt(row, col int, adjacent int) *BoardBuilder {
 	if b.isValidPosition(row, col) {
 		b.board.Cells[row][col].SetAdjacent(adjacent)
@@ -48,12 +48,12 @@ func (b *BoardBuilder) WithAdjacentAt(row, col int, adjacent int) *BoardBuilder 
 	return b
 }
 
-// WithPattern 文字列パターンからボードを構築
+// WithPattern 文字列パターンからボードを構築.
 // '.' = 空のセル
 // '*' = 地雷
 // '1'-'8' = 隣接数を持つ開かれたセル
 // 'F' = フラグ
-// '?' = 未開放
+// '?' = 未開放.
 func (b *BoardBuilder) WithPattern(pattern []string) *BoardBuilder {
 	for i, row := range pattern {
 		if i >= b.board.Height {
@@ -81,19 +81,19 @@ func (b *BoardBuilder) WithPattern(pattern []string) *BoardBuilder {
 	return b
 }
 
-// Build 構築したボードを返す
+// Build 構築したボードを返す.
 func (b *BoardBuilder) Build() *game.Board {
 	// 隣接数を自動計算（地雷が配置されている場合）
 	b.calculateAdjacents()
 	return b.board
 }
 
-// isValidPosition 位置が有効かチェック
+// isValidPosition 位置が有効かチェック.
 func (b *BoardBuilder) isValidPosition(row, col int) bool {
 	return row >= 0 && row < b.board.Height && col >= 0 && col < b.board.Width
 }
 
-// calculateAdjacents 隣接地雷数を計算
+// calculateAdjacents 隣接地雷数を計算.
 func (b *BoardBuilder) calculateAdjacents() {
 	for i := 0; i < b.board.Height; i++ {
 		for j := 0; j < b.board.Width; j++ {

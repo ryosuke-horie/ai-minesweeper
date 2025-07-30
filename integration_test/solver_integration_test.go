@@ -9,7 +9,7 @@ import (
 	"github.com/r-horie/ai-minesweeper/testutil"
 )
 
-// TestSolverCompleteGame ソルバーが完全なゲームを解くテスト
+// TestSolverCompleteGame ソルバーが完全なゲームを解くテスト.
 func TestSolverCompleteGame(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -83,7 +83,6 @@ func TestSolverCompleteGame(t *testing.T) {
 				result := s.Solve()
 
 				if result.CanProgress {
-
 					// 安全なセルをクリック
 					for _, pos := range result.SafeCells {
 						if g.State == game.Playing {
@@ -125,7 +124,7 @@ func TestSolverCompleteGame(t *testing.T) {
 	}
 }
 
-// TestSolverPerformance ソルバーのパフォーマンステスト
+// TestSolverPerformance ソルバーのパフォーマンステスト.
 func TestSolverPerformance(t *testing.T) {
 	difficulties := []struct {
 		name string
@@ -139,7 +138,7 @@ func TestSolverPerformance(t *testing.T) {
 	for _, d := range difficulties {
 		t.Run(d.name, func(t *testing.T) {
 			g := game.NewGame(d.diff)
-			
+
 			// 初回クリック（中央付近）
 			firstClick := game.Position{
 				Row: g.Board.Height / 2,
@@ -153,7 +152,7 @@ func TestSolverPerformance(t *testing.T) {
 
 			for g.State == game.Playing && moves < maxMoves {
 				moves++
-				
+
 				s := solver.NewSolver(g.Board)
 				result := s.Solve()
 
@@ -184,11 +183,11 @@ func TestSolverPerformance(t *testing.T) {
 	}
 }
 
-// TestSolverWithAIAssist AI支援機能の統合テスト
+// TestSolverWithAIAssist AI支援機能の統合テスト.
 func TestSolverWithAIAssist(t *testing.T) {
 	// AI支援を有効にしたゲームをシミュレート
 	g := game.NewGame(game.Intermediate)
-	
+
 	aiAssistEnabled := true
 	autoSolveCount := 0
 	maxAutoSolves := 5
@@ -204,7 +203,7 @@ func TestSolverWithAIAssist(t *testing.T) {
 
 			if result.CanProgress {
 				autoSolveCount++
-				
+
 				// 自動的に安全なセルを開く
 				for _, pos := range result.SafeCells {
 					if g.State == game.Playing {
@@ -220,7 +219,7 @@ func TestSolverWithAIAssist(t *testing.T) {
 				}
 
 				// AI支援の動作をログ
-				t.Logf("AI assist #%d: revealed %d cells, flagged %d mines", 
+				t.Logf("AI assist #%d: revealed %d cells, flagged %d mines",
 					autoSolveCount, len(result.SafeCells), len(result.MineCells))
 			} else {
 				// これ以上推論できない
@@ -231,12 +230,12 @@ func TestSolverWithAIAssist(t *testing.T) {
 
 	t.Logf("AI assisted %d times", autoSolveCount)
 	t.Logf("Final state: %v", g.State)
-	t.Logf("Revealed: %d/%d safe cells", 
-		g.Board.Width*g.Board.Height - g.Board.Mines - g.Board.CountUnrevealedSafeCells(),
-		g.Board.Width*g.Board.Height - g.Board.Mines)
+	t.Logf("Revealed: %d/%d safe cells",
+		g.Board.Width*g.Board.Height-g.Board.Mines-g.Board.CountUnrevealedSafeCells(),
+		g.Board.Width*g.Board.Height-g.Board.Mines)
 }
 
-// TestSolverEdgeCases ソルバーのエッジケーステスト
+// TestSolverEdgeCases ソルバーのエッジケーステスト.
 func TestSolverEdgeCases(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -304,7 +303,7 @@ func TestSolverEdgeCases(t *testing.T) {
 				return g, solver.NewSolver(g.Board)
 			},
 			validate: func(t *testing.T, result *solver.SolverResult) {
-				t.Logf("Result: SafeCells=%d, MineCells=%d, CanProgress=%v", 
+				t.Logf("Result: SafeCells=%d, MineCells=%d, CanProgress=%v",
 					len(result.SafeCells), len(result.MineCells), result.CanProgress)
 				if !result.CanProgress {
 					t.Error("Should progress with revealed number")
@@ -321,7 +320,7 @@ func TestSolverEdgeCases(t *testing.T) {
 			g, s := tt.setup()
 			result := s.Solve()
 			tt.validate(t, &result)
-			
+
 			// ゲームの状態も確認
 			if g.State == game.Lost {
 				t.Log("Game was lost (expected in some edge cases)")
@@ -330,15 +329,15 @@ func TestSolverEdgeCases(t *testing.T) {
 	}
 }
 
-// TestInteractiveGameplay インタラクティブなゲームプレイのシミュレーション
+// TestInteractiveGameplay インタラクティブなゲームプレイのシミュレーション.
 func TestInteractiveGameplay(t *testing.T) {
 	// ユーザーとAIが交互にプレイするシミュレーション
 	g := game.NewGame(game.Beginner)
-	
+
 	type Turn struct {
-		IsAI     bool
-		Action   func(*game.Game, *solver.Solver) bool
-		Name     string
+		IsAI   bool
+		Action func(*game.Game, *solver.Solver) bool
+		Name   string
 	}
 
 	turns := []Turn{
@@ -394,13 +393,13 @@ func TestInteractiveGameplay(t *testing.T) {
 	for g.State == game.Playing && turnCount < maxTurns {
 		turn := turns[turnCount%len(turns)]
 		s := solver.NewSolver(g.Board)
-		
+
 		if turn.Action(g, s) {
-			t.Logf("Turn %d (%s): %s", turnCount+1, 
-				map[bool]string{true: "AI", false: "User"}[turn.IsAI], 
+			t.Logf("Turn %d (%s): %s", turnCount+1,
+				map[bool]string{true: "AI", false: "User"}[turn.IsAI],
 				turn.Name)
 		}
-		
+
 		turnCount++
 	}
 

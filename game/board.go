@@ -38,11 +38,10 @@ func NewBoard(width, height, mines int) *Board {
 }
 
 func (b *Board) Initialize(firstClick Position) {
-
 	mineCount := 0
 	for mineCount < b.Mines {
-		row := rand.Intn(b.Height)
-		col := rand.Intn(b.Width)
+		row := rand.Intn(b.Height) //nolint:gosec // 地雷配置にはmath/randで十分
+		col := rand.Intn(b.Width)  //nolint:gosec // 地雷配置にはmath/randで十分
 
 		if row == firstClick.Row && col == firstClick.Col {
 			continue

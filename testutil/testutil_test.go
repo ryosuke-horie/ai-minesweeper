@@ -42,7 +42,7 @@ func TestBoardBuilder(t *testing.T) {
 
 		// 地雷の確認
 		expectedMines := []game.Position{
-			{0, 2}, {1, 1}, {2, 0},
+			{Row: 0, Col: 2}, {Row: 1, Col: 1}, {Row: 2, Col: 0},
 		}
 		for _, pos := range expectedMines {
 			if !board.Cells[pos.Row][pos.Col].IsMine {
@@ -78,7 +78,7 @@ func TestBoardBuilder(t *testing.T) {
 func TestGameBuilder(t *testing.T) {
 	t.Run("default game", func(t *testing.T) {
 		g := NewGameBuilder().Build()
-		
+
 		if g.State != game.Playing {
 			t.Error("Default game should be in Playing state")
 		}
@@ -166,12 +166,12 @@ func TestDisplay(t *testing.T) {
 			Build()
 
 		display := DisplayBoard(board)
-		
+
 		// ヘッダーがあることを確認
 		if !strings.Contains(display, "0 1 2") {
 			t.Error("Column headers missing")
 		}
-		
+
 		// 各セルの表示を確認
 		// 地雷は開かれていないので'?'として表示される
 		if !strings.Contains(display, "1 2 ?") {
@@ -194,7 +194,7 @@ func TestDisplay(t *testing.T) {
 		display := DisplayBoardCompact(board)
 		// 地雷は開かれていないので'?'として表示される
 		expected := "12?\n2?F\n?2?"
-		
+
 		if display != expected {
 			t.Errorf("Compact display = %q, want %q", display, expected)
 		}
@@ -204,14 +204,14 @@ func TestDisplay(t *testing.T) {
 		board1 := NewBoardBuilder(2, 2, 0).
 			WithRevealedAt(0, 0).
 			Build()
-			
+
 		board2 := NewBoardBuilder(2, 2, 0).
 			WithRevealedAt(0, 0).
 			WithRevealedAt(1, 1).
 			Build()
 
 		diff := CompareBoardStates(board1, board2)
-		
+
 		if !strings.Contains(diff, "[1,1]") {
 			t.Error("Difference at [1,1] not detected")
 		}
@@ -280,12 +280,12 @@ func TestScenarios(t *testing.T) {
 
 func TestGameScenarios(t *testing.T) {
 	scenarios := CreateGameScenarios()
-	
+
 	// 最低限のシナリオがあることを確認
 	if len(scenarios) < 3 {
 		t.Error("Expected at least 3 game scenarios")
 	}
-	
+
 	// 各シナリオが有効であることを確認
 	for _, scenario := range scenarios {
 		t.Run(scenario.Name, func(t *testing.T) {
@@ -295,7 +295,7 @@ func TestGameScenarios(t *testing.T) {
 			if len(scenario.Actions) == 0 {
 				t.Error("No actions defined")
 			}
-			
+
 			// セットアップが動作することを確認
 			g := scenario.Setup()
 			if g == nil {
