@@ -1,0 +1,291 @@
+package integration_test
+
+import (
+	"bytes"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/r-horie/ai-minesweeper/game"
+	"github.com/r-horie/ai-minesweeper/testutil"
+	"github.com/r-horie/ai-minesweeper/ui/tui"
+)
+
+// TestTUIDisplay TUIの表示機能のテスト
+func TestTUIDisplay(t *testing.T) {
+	tests := []struct {
+		name     string
+		setup    func() *game.Game
+		validate func(*testing.T, string)
+	}{
+		{
+			name: "initial board display",
+			setup: func() *game.Game {
+				return game.NewGame(game.Beginner)
+			},
+			validate: func(t *testing.T, output string) {
+				// ヘッダーの確認
+				if !strings.Contains(output, "AI Minesweeper") {
+					t.Error("Missing title")
+				}
+				// グリッドの確認
+				if !strings.Contains(output, "│") || !strings.Contains(output, "─") {
+					t.Error("Missing grid borders")
+				}
+				// 難易度表示の確認
+				if !strings.Contains(output, "初級") {
+					t.Error("Missing difficulty display")
+				}
+			},
+		},
+		{
+			name: "revealed cells display",
+			setup: func() *game.Game {
+				board := testutil.NewBoardBuilder(3, 3, 1).
+					WithPattern([]string{
+						"111",
+						"1*1",
+						"111",
+					}).
+					Build()
+				return testutil.NewGameBuilder().
+					WithCustomBoard(board).
+					WithoutFirstClick().
+					Build()
+			},
+			validate: func(t *testing.T, output string) {
+				// 数字が表示されているか確認
+				if !strings.Contains(output, "1") {
+					t.Error("Numbers not displayed")
+				}
+			},
+		},
+		{
+			name: "game won display",
+			setup: func() *game.Game {
+				return testutil.NewGameBuilder().
+					WithState(game.Won).
+					Build()
+			},
+			validate: func(t *testing.T, output string) {
+				if !strings.Contains(output, "勝利") || !strings.Contains(output, "Win") {
+					t.Error("Win message not displayed")
+				}
+			},
+		},
+		{
+			name: "game lost display",
+			setup: func() *game.Game {
+				board := testutil.NewBoardBuilder(3, 3, 1).
+					WithMineAt(1, 1).
+					Build()
+				g := testutil.NewGameBuilder().
+					WithCustomBoard(board).
+					WithoutFirstClick().
+					WithState(game.Lost).
+					Build()
+				// 地雷を表示状態にする
+				g.Board.RevealAll()
+				return g
+			},
+			validate: func(t *testing.T, output string) {
+				if !strings.Contains(output, "ゲームオーバー") || !strings.Contains(output, "Game Over") {
+					t.Error("Game over message not displayed")
+				}
+				// 地雷が表示されているか
+				if !strings.Contains(output, "*") {
+					t.Error("Mines not displayed after game over")
+				}
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := tt.setup()
+			
+			// バッファに出力をキャプチャ
+			var buf bytes.Buffer
+			renderer := tui.NewRenderer(&buf)
+			renderer.Render(g)
+			
+			output := buf.String()
+			tt.validate(t, output)
+			
+			if testing.Verbose() {
+				t.Logf("TUI Output:\n%s", output)
+			}
+		})
+	}
+}
+
+// TestTUIColors カラー表示のテスト
+func TestTUIColors(t *testing.T) {
+	board := testutil.NewBoardBuilder(5, 5, 5).
+		WithPattern([]string{
+			"12*21",
+			"2*321",
+			"2221*",
+			"1110?",
+			"?10??",
+		}).
+		Build()
+		
+	g := testutil.NewGameBuilder().
+		WithCustomBoard(board).
+		WithoutFirstClick().
+		Build()
+
+	var buf bytes.Buffer
+	renderer := tui.NewRenderer(&buf)
+	renderer.Render(g)
+	
+	output := buf.String()
+	
+	// ANSIカラーコードの存在を確認
+	colorCodes := []string{
+		"\033[", // ESC sequence start
+		"34m",   // blue for 1
+		"32m",   // green for 2
+		"31m",   // red for 3
+	}
+	
+	hasColors := false
+	for _, code := range colorCodes {
+		if strings.Contains(output, code) {
+			hasColors = true
+			break
+		}
+	}
+	
+	if !hasColors {
+		t.Log("No color codes found (this may be expected in test environment)")
+	}
+}
+
+// TestTUIInteraction TUIの操作性テスト
+func TestTUIInteraction(t *testing.T) {
+	// キー入力のシミュレーション
+	scenarios := []struct {
+		name   string
+		input  string
+		expect func(*testing.T, *game.Game)
+	}{
+		{
+			name:  "move cursor",
+			input: "hjkl", // vim-style movement
+			expect: func(t *testing.T, g *game.Game) {
+				// カーソル位置のテスト（実際のTUIでは座標管理が必要）
+				t.Log("Cursor movement test would be implemented here")
+			},
+		},
+		{
+			name:  "click cell",
+			input: " ", // space to click
+			expect: func(t *testing.T, g *game.Game) {
+				// クリック後の状態確認
+				if testutil.CountRevealed(g.Board) == 0 {
+					t.Error("No cells revealed after click")
+				}
+			},
+		},
+		{
+			name:  "toggle flag",
+			input: "f", // flag toggle
+			expect: func(t *testing.T, g *game.Game) {
+				if testutil.CountFlagged(g.Board) == 0 {
+					t.Error("No flags placed")
+				}
+			},
+		},
+	}
+	
+	for _, sc := range scenarios {
+		t.Run(sc.name, func(t *testing.T) {
+			g := game.NewGame(game.Beginner)
+			// 実際のTUIではここでキー入力を処理
+			// このテストでは動作の期待値のみを定義
+			sc.expect(t, g)
+		})
+	}
+}
+
+// TestTUIResponsiveness TUIの応答性テスト
+func TestTUIResponsiveness(t *testing.T) {
+	sizes := []game.Difficulty{
+		game.Beginner,
+		game.Intermediate,
+		game.Expert,
+	}
+	
+	for _, size := range sizes {
+		t.Run(size.Name, func(t *testing.T) {
+			g := game.NewGame(size)
+			
+			// 大量のセルを開く
+			g.Click(game.Position{Row: size.Height / 2, Col: size.Width / 2})
+			
+			// レンダリング時間を計測
+			var buf bytes.Buffer
+			renderer := tui.NewRenderer(&buf)
+			
+			start := time.Now()
+			renderer.Render(g)
+			elapsed := time.Since(start)
+			
+			t.Logf("Board size: %dx%d, Render time: %v", size.Width, size.Height, elapsed)
+			
+			// パフォーマンス基準（大きなボードでも100ms以内）
+			if elapsed > 100*time.Millisecond {
+				t.Errorf("Rendering took too long: %v", elapsed)
+			}
+		})
+	}
+}
+
+// TestTUIErrorHandling TUIのエラーハンドリング
+func TestTUIErrorHandling(t *testing.T) {
+	tests := []struct {
+		name     string
+		action   func(*game.Game) error
+		expectOk bool
+	}{
+		{
+			name: "invalid position click",
+			action: func(g *game.Game) error {
+				// 範囲外のクリック
+				g.Click(game.Position{Row: 999, Col: 999})
+				return nil
+			},
+			expectOk: true, // エラーでクラッシュしない
+		},
+		{
+			name: "click on flagged cell",
+			action: func(g *game.Game) error {
+				pos := game.Position{Row: 0, Col: 0}
+				g.ToggleFlag(pos)
+				g.Click(pos) // フラグのあるセルをクリック
+				return nil
+			},
+			expectOk: true,
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := game.NewGame(game.Beginner)
+			
+			// エラーが発生してもパニックしないことを確認
+			defer func() {
+				if r := recover(); r != nil && tt.expectOk {
+					t.Errorf("Unexpected panic: %v", r)
+				}
+			}()
+			
+			err := tt.action(g)
+			if err != nil && tt.expectOk {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}

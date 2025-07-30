@@ -34,7 +34,7 @@ func (s *Solver) Solve() SolverResult {
 	safes := s.findDefiniteSafeCells()
 	result.SafeCells = safes
 
-	result.CanProgress = len(result.SafeCells) > 0
+	result.CanProgress = len(result.SafeCells) > 0 || len(result.MineCells) > 0
 	return result
 }
 
@@ -85,6 +85,15 @@ func (s *Solver) findDefiniteSafeCells() []game.Position {
 			}
 
 			if cell.Adjacent == 0 {
+				// 空のセルの周囲はすべて安全
+				for _, adjPos := range s.board.GetAdjacentPositions(pos) {
+					adjCell := s.board.GetCell(adjPos)
+					if adjCell != nil && !adjCell.IsRevealed && !adjCell.IsFlagged {
+						if !containsPosition(safes, adjPos) {
+							safes = append(safes, adjPos)
+						}
+					}
+				}
 				continue
 			}
 
